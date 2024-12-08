@@ -1,5 +1,9 @@
-Getting Started \n
+Getting Started 
+
+
 Prerequisites
+
+
 Before you begin, ensure you have the following installed:
 
 Python 3.12+
