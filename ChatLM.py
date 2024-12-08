@@ -13,14 +13,6 @@ from youtube_transcript_api import YouTubeTranscriptApi
 import requests
 from bs4 import BeautifulSoup
 
-# load_dotenv()
-# os.getenv("GOOGLE_API_KEY")
-# genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
-
-
-
-
 
 def get_pdf_text(pdf_docs):
     text=""
@@ -39,6 +31,7 @@ def get_youtbe_transcript(link):
     except Exception as e:
         st.error(f"Error fetching trascript: {e}")
         return ""
+        
 # Function to extract text from a website
 def get_website_text(url):
     try:
