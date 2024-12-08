@@ -3,6 +3,7 @@ google-generativeai
 langchain
 PyPDF2
 faiss-cpu
+faiss
 langchain_google_genai
 youtube_transcript_api
 requests
