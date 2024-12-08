@@ -7,3 +7,6 @@ langchain_google_genai
 youtube_transcript_api
 requests
 beautifulsoup4
+langchain_community
+langchain_core
+pymupdf
