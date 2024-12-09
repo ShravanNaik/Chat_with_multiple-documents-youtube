@@ -31,7 +31,6 @@ def get_youtbe_transcript(link):
     except Exception as e:
         st.error(f"Error fetching trascript: {e}")
         return ""
-        
 # Function to extract text from a website
 def get_website_text(url):
     try:
@@ -57,6 +56,11 @@ def get_vector_store(text_chunks,embeddings):
         st.error("Error Creating Index:{e}")
 
 
+def create_vector_store(text_chunks):
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+    return vector_store
+
 def get_conversational_chain():
 
     prompt_template = """
@@ -78,21 +82,11 @@ def get_conversational_chain():
 
 
 
-def user_input(user_question):
-    embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
-    
-    new_db = FAISS.load_local("faiss_index", embeddings,allow_dangerous_deserialization=True)
-    docs = new_db.similarity_search(user_question)
-
+def user_input(user_question,vector_store):
+    docs = vector_store.similarity_search(user_question)
     chain = get_conversational_chain()
-
-    
-    response = chain(
-        {"input_documents":docs, "question": user_question}
-        , return_only_outputs=True)
-
-    print(response)
-    st.write("Reply: ", response["output_text"])
+    response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
+    return response["output_text"]
 
 
 
@@ -149,31 +143,34 @@ def main():
         pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
         youtube_link = st.text_input("Enter your youtube link")
         website_link = st.text_input("Enter website link")
-        if st.button("Submit & Process"):
-            with st.spinner("Processing..."):
-                combined_text =""
+        if user_api_key:
 
-                if pdf_docs:
-                    combined_text +=get_pdf_text(pdf_docs)
+            if st.button("Submit & Process"):
+                with st.spinner("Processing..."):
+                    combined_text =""
 
-                if youtube_link:
-                    combined_text += get_youtbe_transcript(youtube_link)
+                    if pdf_docs:
+                        combined_text +=get_pdf_text(pdf_docs)
 
-                if website_link:
-                    combined_text += get_website_text(website_link)
+                    if youtube_link:
+                        combined_text += get_youtbe_transcript(youtube_link)
 
-                if combined_text:
+                    if website_link:
+                        combined_text += get_website_text(website_link)
 
-                    # raw_text = get_pdf_text(pdf_docs)
-                    text_chunks = get_text_chunks(combined_text)
-                    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-                    get_vector_store(text_chunks,embeddings)
-                    st.success("Done")
-
-    user_question = st.text_input("Ask a Question")
-
-    if user_question:
-        user_input(user_question)
+                    if combined_text:
+                        text_chunks = get_text_chunks(combined_text)
+                        vector_store = create_vector_store(text_chunks)
+                        st.session_state["vector_store"] = vector_store
+                        st.success("Done")
+    user_question = st.text_input("Ask a question based on the processed data")
+    if user_question and "vector_store" in st.session_state:
+        vector_store = st.session_state["vector_store"]
+        with st.spinner("Fetching answer..."):
+            answer = user_input(user_question, vector_store)
+            st.write("Reply:", answer)
+    elif user_question:
+        st.error("Please process some data first!")
 
 
 
