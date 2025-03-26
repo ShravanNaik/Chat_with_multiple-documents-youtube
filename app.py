@@ -12,7 +12,9 @@ from dotenv import load_dotenv
 from youtube_transcript_api import YouTubeTranscriptApi
 import requests
 from bs4 import BeautifulSoup
-
+load_dotenv()
+API_KEY = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=API_KEY)
 
 def get_pdf_text(pdf_docs):
     text=""
@@ -132,12 +134,6 @@ def main():
     st.header("Chat with PDF ,Youtube or Websites")
 
 
-    with st.sidebar:
-        st.title("Enter Your Google API Key:")
-        user_api_key = st.text_input("Google API Key", type="password", help="Enter your Google API key for the app.")
-        if user_api_key:
-            genai.configure(api_key=user_api_key)
-            st.success("API Key SUccessfully configured fot the session")
 
         st.title("Upload Data:")
         pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
