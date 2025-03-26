@@ -134,14 +134,14 @@ def main():
     st.header("Chat with PDF ,Youtube or Websites")
 
 
+    with st.sidebar:
+        st.title("Upload Data:")
+        pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
+        youtube_link = st.text_input("Enter your youtube link")
+        website_link = st.text_input("Enter website link")
+    
 
-    st.title("Upload Data:")
-    pdf_docs = st.file_uploader("Upload your PDF Files and Click on the Submit & Process Button", accept_multiple_files=True)
-    youtube_link = st.text_input("Enter your youtube link")
-    website_link = st.text_input("Enter website link")
-    if user_api_key:
-
-            if st.button("Submit & Process"):
+    if st.button("Submit & Process"):
                 with st.spinner("Processing..."):
                     combined_text =""
 
