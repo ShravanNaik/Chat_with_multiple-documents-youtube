@@ -141,7 +141,7 @@ def main():
         website_link = st.text_input("Enter website link")
     
 
-    if st.button("Submit & Process"):
+        if st.button("Submit & Process"):
                 with st.spinner("Processing..."):
                     combined_text =""
 
