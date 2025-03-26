@@ -14,7 +14,7 @@ import requests
 from bs4 import BeautifulSoup
 load_dotenv()
 API_KEY = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=API_KEY)
+
 #apis
 def get_pdf_text(pdf_docs):
     text=""
@@ -75,7 +75,7 @@ def get_conversational_chain():
     """
 
     model = ChatGoogleGenerativeAI(model="gemini-1.5-flash",
-                             temperature=0.3)
+                             temperature=0.3,api_key=os.environ["GOOGLE_API_KEY"])
 
     prompt = PromptTemplate(template = prompt_template, input_variables = ["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
