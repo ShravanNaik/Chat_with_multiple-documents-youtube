@@ -1,23 +1,23 @@
 import streamlit as st
- from PyPDF2 import PdfReader
- from langchain.text_splitter import RecursiveCharacterTextSplitter
- import os
- from langchain_google_genai import GoogleGenerativeAIEmbeddings
- import google.generativeai as genai
- from langchain.vectorstores import FAISS
- from langchain_google_genai import ChatGoogleGenerativeAI
- from langchain.chains.question_answering import load_qa_chain
- from langchain.prompts import PromptTemplate
- from dotenv import load_dotenv
- from youtube_transcript_api import YouTubeTranscriptApi
- import requests
- from bs4 import BeautifulSoup
+from PyPDF2 import PdfReader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+import os
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+import google.generativeai as genai
+from langchain.vectorstores import FAISS
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.chains.question_answering import load_qa_chain
+from langchain.prompts import PromptTemplate
+from dotenv import load_dotenv
+from youtube_transcript_api import YouTubeTranscriptApi
+import requests
+from bs4 import BeautifulSoup
  
- load_dotenv()
- API_KEY = os.getenv("GOOGLE_API_KEY")
- genai.configure(api_key=API_KEY)
+load_dotenv()
+API_KEY = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=API_KEY)
  
- def get_pdf_text(pdf_docs):
+def get_pdf_text(pdf_docs):
      text=""
      for pdf in pdf_docs:
          pdf_reader= PdfReader(pdf)
@@ -25,7 +25,7 @@ import streamlit as st
              text+= page.extract_text()
      return  text
  
- def get_youtbe_transcript(link):
+def get_youtbe_transcript(link):
      try:
          video_id = link.split("v=")[1]
          transcript = YouTubeTranscriptApi.get_transcript(video_id)
@@ -35,7 +35,7 @@ import streamlit as st
          st.error(f"Error fetching trascript: {e}")
          return ""
  # Function to extract text from a website
- def get_website_text(url):
+def get_website_text(url):
      try:
          response = requests.get(url)
          soup = BeautifulSoup(response.content, "html.parser")
@@ -45,13 +45,13 @@ import streamlit as st
          st.error(f"Error fetching website content: {e}")
          return ""
  
- def get_text_chunks(text):
+def get_text_chunks(text):
      text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
      chunks = text_splitter.split_text(text)
      return chunks
  
  
- def get_vector_store(text_chunks,embeddings):
+def get_vector_store(text_chunks,embeddings):
      try:
          vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
          vector_store.save_local("faiss_index")
@@ -59,12 +59,12 @@ import streamlit as st
          st.error("Error Creating Index:{e}")
  
  
- def create_vector_store(text_chunks):
+def create_vector_store(text_chunks):
      embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
      vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
      return vector_store
  
- def get_conversational_chain():
+def get_conversational_chain():
  
      prompt_template = """
      Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
@@ -85,7 +85,7 @@ import streamlit as st
  
  
  
- def user_input(user_question,vector_store):
+def user_input(user_question,vector_store):
      docs = vector_store.similarity_search(user_question)
      chain = get_conversational_chain()
      response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
@@ -93,7 +93,7 @@ import streamlit as st
  
  
  
- def main():
+def main():
      st.set_page_config("Chat with Files, Videos or Websites",layout="wide")
      st.markdown("""
          <style>
