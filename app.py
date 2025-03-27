@@ -176,6 +176,5 @@ def main():
          st.error("Please process some data first!")
  
  
- 
- if __name__ == "__main__":
+if __name__ == "__main__":
      main()
