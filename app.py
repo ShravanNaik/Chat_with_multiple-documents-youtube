@@ -14,8 +14,8 @@ import requests
 from bs4 import BeautifulSoup
 load_dotenv()
 
- API_KEY = os.getenv("GOOGLE_API_KEY")
- genai.configure(api_key=API_KEY)
+API_KEY = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=API_KEY)
 
 #apis
 def get_pdf_text(pdf_docs):
